@@ -16,7 +16,7 @@ data class User(
     val login: String = "",
 
     @Column(nullable = false)
-    val password: String = "",
+    val password: String? = "",
 
     @Column(nullable = false)
     val phone: String = "",

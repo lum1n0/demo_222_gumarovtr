@@ -1,4 +1,4 @@
-package com.example.demo.model
+package com.example.demo_gumarov.model
 
 import jakarta.persistence.*
 
