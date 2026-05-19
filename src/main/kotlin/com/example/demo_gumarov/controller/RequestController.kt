@@ -26,6 +26,7 @@ class RequestController(
 ) {
     private val paymentMethods = listOf("наличными", "переводом", "банковской картой")
 
+    // мои заявки
     @GetMapping("/requests")
     fun requestsPage(
         session: HttpSession,
@@ -60,6 +61,7 @@ class RequestController(
         return "requests"
     }
 
+    // показать new-request.html
     @GetMapping("/requests/new")
     fun newRequestPage(session: HttpSession, model: Model): String {
         currentUser(session) ?: return "redirect:/login"
@@ -67,6 +69,7 @@ class RequestController(
         return "new-request"
     }
 
+    // создание заявки
     @PostMapping("/requests/new")
     fun createRequest(
         @RequestParam roomId: String,
@@ -118,6 +121,7 @@ class RequestController(
         return "redirect:/requests?created"
     }
 
+    // создать отзыв
     @PostMapping("/reviews")
     fun createReview(
         @RequestParam requestId: Long,
@@ -150,6 +154,7 @@ class RequestController(
         return "redirect:/requests?reviewSuccess"
     }
 
+    // данные для заявки
     private fun fillRequestFormModel(model: Model) {
         model.addAttribute("rooms", roomRepository.findAll())
         model.addAttribute("paymentMethods", paymentMethods)
@@ -160,6 +165,7 @@ class RequestController(
         model.addAttribute("conferenceDateValue", "")
     }
 
+    // получить пользователя
     private fun currentUser(session: HttpSession): User? {
         val userId = session.getAttribute("userId") as? Long ?: return null
         return userRepository.findById(userId).orElse(null)

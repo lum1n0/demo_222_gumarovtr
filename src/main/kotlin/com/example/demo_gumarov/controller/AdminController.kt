@@ -22,6 +22,7 @@ class AdminController(
 ) {
     private val pageSize = 8
 
+    // панель администратора целикои
     @GetMapping("/admin")
     fun adminPage(
         session: HttpSession,
@@ -49,6 +50,7 @@ class AdminController(
         return "admin"
     }
 
+    // изменяет статус заявки
     @PostMapping("/admin/status")
     fun updateStatus(
         @RequestParam id: Long,
@@ -65,6 +67,7 @@ class AdminController(
         return "redirect:/admin?statusChanged"
     }
 
+    // создание помещений
     @PostMapping("/admin/rooms")
     fun createRoom(
         @RequestParam name: String,
@@ -97,6 +100,7 @@ class AdminController(
         return "redirect:/admin?roomCreated"
     }
 
+    // удаление помещение
     @PostMapping("/admin/rooms/delete")
     fun deleteRoom(
         @RequestParam id: Long,
@@ -113,6 +117,7 @@ class AdminController(
         return "redirect:/admin?roomDeleted"
     }
 
+    // данные для admin.html
     private fun fillAdminModel(
         model: Model,
         status: String?,
@@ -152,6 +157,7 @@ class AdminController(
         model.addAttribute("countCompleted", allRequests.count { it.status == RequestStatus.COMPLETED })
     }
 
+    // текст ошибки
     private fun roomErrorMessage(code: String): String =
         when (code) {
             "empty" -> "Заполните все поля помещения"
@@ -162,9 +168,11 @@ class AdminController(
             else -> "Ошибка при работе с помещением"
         }
 
+    // проверка на админа
     private fun isAdmin(session: HttpSession): Boolean =
         session.getAttribute("userRole") == "ADMIN"
 
+    // сортировка заявок
     private fun List<Request>.sortedByMode(sort: String): List<Request> =
         when (sort) {
             "createdAsc" -> sortedBy { it.createdAt }

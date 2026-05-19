@@ -3,7 +3,7 @@ package com.example.demo_gumarov.controller
 import com.example.demo_gumarov.model.User
 import com.example.demo_gumarov.repository.UserRepository
 import jakarta.servlet.http.HttpSession
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,19 +13,22 @@ import org.springframework.web.bind.annotation.RequestParam
 @Controller
 class AuthController(
     private val userRepository: UserRepository,
-    private val passwordEncoder: BCryptPasswordEncoder
+    private val passwordEncoder: PasswordEncoder
 ) {
     private val loginPattern = Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")
 
+    // открыть index.html
     @GetMapping("/")
     fun homePage(): String = "index"
 
+    // открыть register.html
     @GetMapping("/register")
     fun registerPage(model: Model): String {
         model.addAttribute("values", emptyMap<String, String>())
         return "register"
     }
 
+    // htubcnhfwbz
     @PostMapping("/register")
     fun register(
         @RequestParam fullName: String,
@@ -90,6 +93,7 @@ class AuthController(
         return "redirect:/login?registered"
     }
 
+    // открыть login.html
     @GetMapping("/login")
     fun loginPage(
         @RequestParam(required = false) registered: String?,
@@ -103,6 +107,7 @@ class AuthController(
         return "login"
     }
 
+    // логин запрос
     @PostMapping("/login")
     fun login(
         @RequestParam login: String,
@@ -119,12 +124,14 @@ class AuthController(
         return if (user.role == "ADMIN") "redirect:/admin?loginSuccess" else "redirect:/requests?loginSuccess"
     }
 
+    // логаут
     @GetMapping("/logout")
     fun logout(session: HttpSession): String {
         session.invalidate()
         return "redirect:/login?logout"
     }
 
+    // валидация телефона
     private fun normalizePhone(phone: String): String? {
         var digits = phone.filter(Char::isDigit)
         if (digits.length == 11 && digits.startsWith("8")) {

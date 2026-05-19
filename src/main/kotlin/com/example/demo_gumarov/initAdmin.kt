@@ -7,7 +7,7 @@ import com.example.demo_gumarov.repository.UserRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
 class DataInit {
@@ -16,7 +16,7 @@ class DataInit {
     fun initData(
         userRepository: UserRepository,
         roomRepository: RoomRepository,
-        passwordEncoder: BCryptPasswordEncoder
+        passwordEncoder: PasswordEncoder
     ) = ApplicationRunner {
         if (!userRepository.existsByLogin("Admin26")) {
             userRepository.save(

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - Портал Конференции РФ</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/requests">Портал Конференции РФ</a>
+    <nav class="nav">
+        <span th:text="${user.fullName}">Пользователь</span>
+        <a href="/logout">Выйти</a>
+    </nav>
+</header>
+
+<main class="container">
+    <div class="page-head">
+        <div>
+            <h1>Личный кабинет</h1>
+            <p class="subtitle">Персональные данные, история заявок и отзывы.</p>
+        </div>
+        <a class="btn btn-primary" href="/requests/new">Создать заявку</a>
+    </div>
+
+    <div th:if="${success}" class="alert success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+    <section class="profile-grid">
+        <div class="profile-item panel">
+            <span>ФИО</span>
+            <strong th:text="${user.fullName}">Иванов Иван</strong>
+        </div>
+        <div class="profile-item panel">
+            <span>Телефон</span>
+            <strong th:text="${user.phone}">+7 900 000-00-00</strong>
+        </div>
+        <div class="profile-item panel">
+            <span>Email</span>
+            <strong th:text="${user.email}">mail@example.ru</strong>
+        </div>
+    </section>
+
+    <section class="page-head">
+        <div>
+            <h2>История заявок</h2>
+            <p class="subtitle">Обычный пользователь видит только свои заявки.</p>
+        </div>
+    </section>
+
+    <div th:if="${#lists.isEmpty(requests)}" class="empty-state">
+        Заявок пока нет. Создайте первую заявку на бронирование помещения.
+    </div>
+
+    <div th:if="${!#lists.isEmpty(requests)}" class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Помещение</th>
+                <th>Дата и время</th>
+                <th>Оплата</th>
+                <th>Статус</th>
+                <th>Создана</th>
+                <th>Отзыв</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="req : ${requests}">
+                <td data-label="Номер" th:text="${req.id}">1</td>
+                <td data-label="Помещение">
+                    <strong th:text="${req.room.name}">Конференц-зал</strong><br>
+                    <span class="subtitle" th:text="${req.room.type + ', до ' + req.room.capacity + ' мест'}">тип</span>
+                </td>
+                <td data-label="Дата и время">
+                    <span th:text="${#temporals.format(req.conferenceDate, 'dd.MM.yyyy')}">18.05.2026</span><br>
+                    <span th:text="${#temporals.format(req.startTime, 'HH:mm')}">09:00</span>
+                </td>
+                <td data-label="Оплата" th:text="${req.paymentMethod}">банковской картой</td>
+                <td data-label="Статус">
+                    <span class="badge"
+                          th:classappend="${req.status == 'Новая'} ? 'badge-new' : (${req.status == 'Мероприятие назначено'} ? 'badge-scheduled' : 'badge-completed')"
+                          th:text="${req.status}">Новая</span>
+                </td>
+                <td data-label="Создана" th:text="${#temporals.format(req.createdAt, 'dd.MM.yyyy HH:mm')}">18.05.2026</td>
+                <td data-label="Отзыв">
+                    <form th:if="${req.statusChanged and req.status != 'Новая' and !reviewedRequestIds.contains(req.id)}"
+                          class="review-form"
+                          method="post"
+                          action="/reviews">
+                        <input type="hidden" name="requestId" th:value="${req.id}">
+                        <select class="form-select form-select-sm" name="rating" aria-label="Оценка">
+                            <option value="5">5 - отлично</option>
+                            <option value="4">4 - хорошо</option>
+                            <option value="3">3 - нормально</option>
+                            <option value="2">2 - плохо</option>
+                            <option value="1">1 - очень плохо</option>
+                        </select>
+                        <textarea class="form-control form-control-sm" name="text" required placeholder="Текст отзыва"></textarea>
+                        <button class="btn btn-primary btn-sm" type="submit">Отправить</button>
+                    </form>
+                    <span th:if="${reviewedRequestIds.contains(req.id)}">Отзыв отправлен</span>
+                    <span th:if="${!req.statusChanged or req.status == 'Новая'}">Пока недоступен</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

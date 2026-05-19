@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Портал Конференции РФ</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="auth-wrap">
+    <section class="auth-card narrow">
+        <h1>Регистрация</h1>
+        <p class="subtitle">Создайте аккаунт для бронирования помещений.</p>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form method="post" action="/register" novalidate>
+            <div class="field">
+                <label for="fullName" class="form-label">ФИО / персональные данные</label>
+                <input class="form-control" type="text" id="fullName" name="fullName" required th:value="${values['fullName']}" placeholder="Иванов Иван Иванович">
+                <span class="field-error" th:if="${errors != null and errors['fullName'] != null}" th:text="${errors['fullName']}"></span>
+            </div>
+
+            <div class="field">
+                <label for="phone" class="form-label">Контактный номер телефона</label>
+                <input class="form-control"
+                       type="tel"
+                       id="phone"
+                       name="phone"
+                       required
+                       data-phone-mask
+                       inputmode="tel"
+                       pattern="^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$"
+                       th:value="${values['phone']}"
+                       placeholder="+7 (900) 123-45-67">
+                <span class="hint">Формат: +7 (999) 123-45-67</span>
+                <span class="field-error" th:if="${errors != null and errors['phone'] != null}" th:text="${errors['phone']}"></span>
+            </div>
+
+            <div class="field">
+                <label for="email" class="form-label">Email</label>
+                <input class="form-control" type="email" id="email" name="email" required th:value="${values['email']}" placeholder="mail@example.ru">
+                <span class="field-error" th:if="${errors != null and errors['email'] != null}" th:text="${errors['email']}"></span>
+            </div>
+
+            <div class="field">
+                <label for="login" class="form-label">Логин</label>
+                <input class="form-control" type="text" id="login" name="login" required th:value="${values['login']}" placeholder="user2026">
+                <span class="hint">Минимум 6 символов, латинские буквы и цифры.</span>
+                <span class="field-error" th:if="${errors != null and errors['login'] != null}" th:text="${errors['login']}"></span>
+            </div>
+
+            <div class="field">
+                <label for="password" class="form-label">Пароль</label>
+                <input class="form-control" type="password" id="password" name="password" required placeholder="Минимум 8 символов">
+                <span class="field-error" th:if="${errors != null and errors['password'] != null}" th:text="${errors['password']}"></span>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+            </div>
+        </form>
+
+        <p class="subtitle">Уже зарегистрированы? <a href="/login">Войти</a></p>
+    </section>
+</main>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,10 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портал Конференции РФ</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+<main class="hero">
+    <section class="slider" aria-label="Помещения для конференций">
+        <div class="slide active">
+            <img src="/images/slide1.png" alt="Конференц-зал">
+        </div>
+        <div class="slide">
+            <img src="/images/slide2.png" alt="Коворкинг">
+        </div>
+        <div class="slide">
+            <img src="/images/slide3.png" alt="Аудитория">
+        </div>
+        <div class="slide">
+            <img src="/images/slide4.png" alt="Кинозал">
+        </div>
 
+        <div class="hero-content">
+            <div class="hero-copy">
+                <h1>Портал Конференции РФ</h1>
+                <p class="subtitle">Бронирование аудиторий, коворкингов, кинозалов и конференц-залов с понятной историей заявок и статусами.</p>
+                <div class="actions">
+                    <a href="/login" class="btn btn-primary">Войти</a>
+                    <a href="/register" class="btn btn-light">Зарегистрироваться</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-controls">
+            <button class="icon-btn" type="button" data-prev aria-label="Предыдущее изображение">
+                <img src="/images/icons/left.svg" alt="" aria-hidden="true">
+            </button>
+            <button class="icon-btn" type="button" data-next aria-label="Следующее изображение">
+                <img src="/images/icons/right.svg" alt="" aria-hidden="true">
+            </button>
+        </div>
+    </section>
+
+    <section class="quick-info" aria-label="Возможности портала">
+        <div><strong>4 типа помещений</strong><span>Аудитория, коворкинг, кинозал, конференц-зал.</span></div>
+        <div><strong>История заявок</strong><span>Пользователь видит только собственные бронирования.</span></div>
+        <div><strong>Статусы</strong><span>Новая, назначено, завершено.</span></div>
+        <div><strong>Отзывы</strong><span>Доступны после изменения статуса администратором.</span></div>
+    </section>
+</main>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="/js/slider.js"></script>
 </body>
 </html>

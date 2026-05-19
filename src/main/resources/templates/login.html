@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Портал Конференции РФ</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="auth-wrap">
+    <section class="auth-card narrow">
+        <h1>Вход</h1>
+        <p class="subtitle">Авторизуйтесь для работы с заявками.</p>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form method="post" action="/login">
+            <div class="field">
+                <label for="login" class="form-label">Логин</label>
+                <input class="form-control" type="text" id="login" name="login" required placeholder="Ваш логин">
+            </div>
+
+            <div class="field">
+                <label for="password" class="form-label">Пароль</label>
+                <input class="form-control" type="password" id="password" name="password" required placeholder="Ваш пароль">
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" type="submit">Войти</button>
+                <a class="btn btn-outline-secondary" href="/">На главную</a>
+            </div>
+        </form>
+
+        <p class="subtitle">Ещё не зарегистрированы? <a href="/register">Зарегистрироваться</a></p>
+    </section>
+</main>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

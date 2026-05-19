@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новая заявка - Портал Конференции РФ</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/requests">Портал Конференции РФ</a>
+    <nav class="nav">
+        <a href="/requests">Личный кабинет</a>
+        <a href="/logout">Выйти</a>
+    </nav>
+</header>
+
+<main class="container narrow">
+    <div class="page-head">
+        <div>
+            <h1>Новая заявка</h1>
+            <p class="subtitle">Выберите помещение, дату, время и способ оплаты.</p>
+        </div>
+    </div>
+
+    <section class="auth-card">
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <form method="post" action="/requests/new" novalidate>
+            <div class="field">
+                <label for="roomId">Помещение</label>
+                <select class="form-select" id="roomId" name="roomId" required>
+                    <option value="">Выберите помещение</option>
+                    <option th:each="room : ${rooms}"
+                            th:value="${room.id}"
+                            th:selected="${selectedRoomId == room.id}"
+                            th:text="${room.name + ' - до ' + room.capacity + ' мест'}">Конференц-зал</option>
+                </select>
+                <span class="field-error" th:if="${errors != null and errors['roomId'] != null}" th:text="${errors['roomId']}"></span>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label for="conferenceDate">Дата проведения конференции</label>
+                    <input class="form-control" type="date" id="conferenceDate" name="conferenceDate" required th:value="${conferenceDateValue}">
+                    <span class="field-error" th:if="${errors != null and errors['conferenceDate'] != null}" th:text="${errors['conferenceDate']}"></span>
+                </div>
+
+                <div class="field">
+                    <label for="startTime">Время начала</label>
+                    <select class="form-select" id="startTime" name="startTime" required>
+                        <option value="">Выберите время</option>
+                        <option th:each="time : ${times}" th:value="${time}" th:selected="${selectedTime == time}" th:text="${time}">09:00</option>
+                    </select>
+                    <span class="field-error" th:if="${errors != null and errors['startTime'] != null}" th:text="${errors['startTime']}"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="paymentMethod">Способ оплаты</label>
+                <select class="form-select" id="paymentMethod" name="paymentMethod" required>
+                    <option value="">Выберите способ оплаты</option>
+                    <option th:each="method : ${paymentMethods}" th:value="${method}" th:selected="${selectedPaymentMethod == method}" th:text="${method}">банковской картой</option>
+                </select>
+                <span class="field-error" th:if="${errors != null and errors['paymentMethod'] != null}" th:text="${errors['paymentMethod']}"></span>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" type="submit">Отправить заявку</button>
+                <a class="btn btn-outline-secondary" href="/requests">Назад</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('conferenceDate').min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>

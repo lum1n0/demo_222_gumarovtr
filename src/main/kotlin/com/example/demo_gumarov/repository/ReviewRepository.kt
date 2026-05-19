@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ReviewRepository : JpaRepository<Review, Long> {
     fun existsByRequest(request: Request): Boolean
-    fun findByRequest(request: Request): Review?
 }

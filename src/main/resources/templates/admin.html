@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Портал Конференции РФ</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/admin">Портал Конференции РФ</a>
+    <nav class="nav">
+        <span>Администратор</span>
+        <a href="/logout">Выйти</a>
+    </nav>
+</header>
+
+<main class="container">
+    <div class="page-head">
+        <div>
+            <h1>Административная панель</h1>
+            <p class="subtitle">Все заявки пользователей, фильтрация, сортировка, помещения и смена статусов.</p>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <section class="stats">
+        <div class="stat-card">
+            <span>Всего</span>
+            <strong th:text="${countAll}">0</strong>
+        </div>
+        <div class="stat-card">
+            <span>Новые</span>
+            <strong th:text="${countNew}">0</strong>
+        </div>
+        <div class="stat-card">
+            <span>Назначены</span>
+            <strong th:text="${countScheduled}">0</strong>
+        </div>
+        <div class="stat-card">
+            <span>Завершены</span>
+            <strong th:text="${countCompleted}">0</strong>
+        </div>
+    </section>
+
+    <section class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                <div>
+                    <h2 class="h5 mb-1">Создать помещение</h2>
+                    <p class="text-secondary mb-0">Новое помещение сразу появится в форме бронирования.</p>
+                </div>
+            </div>
+
+            <form method="post" action="/admin/rooms" class="row g-3">
+                <div class="col-md-3">
+                    <label for="roomName" class="form-label">Название</label>
+                    <input class="form-control" id="roomName" name="name" required placeholder="Переговорная А">
+                </div>
+                <div class="col-md-3">
+                    <label for="roomType" class="form-label">Тип</label>
+                    <select class="form-select" id="roomType" name="type" required>
+                        <option value="">Выберите тип</option>
+                        <option value="аудитория">аудитория</option>
+                        <option value="коворкинг">коворкинг</option>
+                        <option value="кинозал">кинозал</option>
+                        <option value="конференц-зал">конференц-зал</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="roomCapacity" class="form-label">Вместимость</label>
+                    <input class="form-control" id="roomCapacity" name="capacity" type="number" min="1" required placeholder="50">
+                </div>
+                <div class="col-md-4">
+                    <label for="roomDescription" class="form-label">Описание</label>
+                    <input class="form-control" id="roomDescription" name="description" required placeholder="Краткое описание помещения">
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-success" type="submit">Создать помещение</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                <div>
+                    <h2 class="h5 mb-1">Все помещения</h2>
+                    <p class="text-secondary mb-0">Просмотр и удаление помещений, которые ещё не используются в заявках.</p>
+                </div>
+                <span class="badge text-bg-secondary" th:text="${#lists.size(rooms) + ' помещений'}">0 помещений</span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(rooms)}" class="empty-state">Помещения пока не добавлены.</div>
+
+            <div th:if="${!#lists.isEmpty(rooms)}" class="table-wrap">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Название</th>
+                        <th>Тип</th>
+                        <th>Вместимость</th>
+                        <th>Описание</th>
+                        <th>Заявок</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="room : ${rooms}">
+                        <td data-label="#" th:text="${room.id}">1</td>
+                        <td data-label="Название">
+                            <strong th:text="${room.name}">Конференц-зал</strong>
+                        </td>
+                        <td data-label="Тип" th:text="${room.type}">конференц-зал</td>
+                        <td data-label="Вместимость" th:text="${room.capacity + ' мест'}">80 мест</td>
+                        <td data-label="Описание" th:text="${room.description}">Описание</td>
+                        <td data-label="Заявок">
+                            <span class="badge text-bg-light" th:text="${roomRequestCounts[room.id]}">0</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <form class="filters panel" method="get" action="/admin">
+        <div>
+            <label for="status" class="form-label">Статус</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Все статусы</option>
+                <option th:each="item : ${statuses}" th:value="${item}" th:selected="${selectedStatus == item}" th:text="${item}">Новая</option>
+            </select>
+        </div>
+        <div>
+            <label for="roomId" class="form-label">Помещение</label>
+            <select class="form-select" id="roomId" name="roomId">
+                <option value="">Все помещения</option>
+                <option th:each="room : ${rooms}" th:value="${room.id}" th:selected="${selectedRoomId == room.id}" th:text="${room.name}">Зал</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="sort" class="form-label">Сортировка</label>
+            <select class="form-select" id="sort" name="sort">
+                <option value="createdDesc" th:selected="${sort == 'createdDesc'}">Сначала новые заявки</option>
+                <option value="createdAsc" th:selected="${sort == 'createdAsc'}">Сначала старые заявки</option>
+                <option value="dateAsc" th:selected="${sort == 'dateAsc'}">Дата конференции по возрастанию</option>
+                <option value="dateDesc" th:selected="${sort == 'dateDesc'}">Дата конференции по убыванию</option>
+                <option value="status" th:selected="${sort == 'status'}">По статусу</option>
+                <option value="user" th:selected="${sort == 'user'}">По пользователю</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Применить</button>
+    </form>
+
+    <div th:if="${#lists.isEmpty(requests)}" class="empty-state">Заявок по выбранным условиям нет.</div>
+
+    <div th:if="${!#lists.isEmpty(requests)}" class="table-wrap">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Пользователь</th>
+                <th>Контакты</th>
+                <th>Помещение</th>
+                <th>Дата и время</th>
+                <th>Оплата</th>
+                <th>Создана</th>
+                <th>Отзыв</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="req : ${requests}">
+                <td data-label="#" th:text="${req.id}">1</td>
+                <td data-label="Пользователь" th:text="${req.user.fullName}">Иванов Иван</td>
+                <td data-label="Контакты">
+                    <span th:text="${req.user.phone}">+7</span><br>
+                    <span th:text="${req.user.email}">mail</span>
+                </td>
+                <td data-label="Помещение">
+                    <strong th:text="${req.room.name}">Конференц-зал</strong><br>
+                    <span class="subtitle" th:text="${req.room.type + ', ' + req.room.capacity + ' мест'}">80 мест</span>
+                </td>
+                <td data-label="Дата и время">
+                    <span th:text="${#temporals.format(req.conferenceDate, 'dd.MM.yyyy')}">18.05.2026</span><br>
+                    <span th:text="${#temporals.format(req.startTime, 'HH:mm')}">09:00</span>
+                </td>
+                <td data-label="Оплата" th:text="${req.paymentMethod}">наличными</td>
+                <td data-label="Создана" th:text="${#temporals.format(req.createdAt, 'dd.MM.yyyy HH:mm')}">18.05.2026</td>
+                <td data-label="Отзыв">
+                    <div th:if="${reviewsByRequestId[req.id] != null}" class="admin-review">
+                        <div class="badge text-bg-warning mb-2" th:text="${reviewsByRequestId[req.id].rating + ' / 5'}">5 / 5</div>
+                        <div th:text="${reviewsByRequestId[req.id].text}">Комментарий пользователя</div>
+                        <div class="text-secondary small mt-1"
+                             th:text="${#temporals.format(reviewsByRequestId[req.id].createdAt, 'dd.MM.yyyy HH:mm')}">
+                            18.05.2026
+                        </div>
+                    </div>
+                    <span th:if="${reviewsByRequestId[req.id] == null}" class="text-secondary">Отзыва нет</span>
+                </td>
+                <td data-label="Статус">
+                    <form method="post" action="/admin/status" class="review-form">
+                        <input type="hidden" name="id" th:value="${req.id}">
+                        <select class="form-select form-select-sm" name="status">
+                            <option th:each="item : ${statuses}" th:value="${item}" th:selected="${req.status == item}" th:text="${item}">Новая</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a class="btn btn-outline-secondary btn-sm"
+           th:if="${page > 0}"
+           th:href="@{/admin(status=${selectedStatus}, roomId=${selectedRoomId}, sort=${sort}, page=${page - 1})}">Назад</a>
+        <span th:text="${'Страница ' + (page + 1) + ' из ' + totalPages}">Страница 1 из 1</span>
+        <a class="btn btn-outline-secondary btn-sm"
+           th:if="${page + 1 < totalPages}"
+           th:href="@{/admin(status=${selectedStatus}, roomId=${selectedRoomId}, sort=${sort}, page=${page + 1})}">Вперёд</a>
+    </div>
+</main>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
